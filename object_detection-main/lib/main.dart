@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:object_detection/realtime/live_camera.dart';
 import 'package:object_detection/static%20image/static.dart';
+import 'package:object_detection/historial/historial.dart';
 
 List<CameraDescription> cameras;
 
@@ -98,6 +99,25 @@ class _MyAppState extends State<MyApp> {
                 //color: Colors.cyan[400],
                 height: 250,
                 width: 400,
+              ),
+              Container(
+                child: MaterialButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                    side: BorderSide(color: Colors.red),
+                  ),
+                  height: 63,
+                  minWidth: 100,
+                  color: Color(int.parse("0xFF26C6A".replaceAll('#', '0xff'))),
+                  child: Text(
+                    "Historial",
+                    style: new TextStyle(fontSize: 16, color: Colors.black),
+                  ),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => HistoryApp()));
+                  },
+                ),
               ),
               //  ),
             ],
