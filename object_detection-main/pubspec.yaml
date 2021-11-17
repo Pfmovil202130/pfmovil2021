@@ -23,6 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  shared_preferences: ^2.0.8
+  screenshot: ^1.2.3
+  image_gallery_saver: '^1.7.1'
+  permission_handler: ^8.3.0
 
 
   # The following adds the Cupertino Icons font to your application.
