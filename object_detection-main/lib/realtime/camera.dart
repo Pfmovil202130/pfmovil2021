@@ -3,8 +3,10 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_tts/flutter_tts.dart';
+import 'package:object_detection/historial/historial.dart';
 import 'package:tflite/tflite.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:object_detection/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -12,16 +14,11 @@ import 'dart:math' as math;
 
 typedef void Callback(List<dynamic> list, int h, int w);
 
-class item {
-  String nombre, descripcion, photo;
-  item(this.nombre, this.descripcion, this.photo);
-}
-
 class CameraFeed extends StatefulWidget {
   final List<CameraDescription> cameras;
   final Callback setRecognitions;
   final FlutterTts flutterTts = FlutterTts();
-  
+
   // The cameraFeed Class takes the cameras list and the setRecognitions
   // function as argument
   CameraFeed(this.cameras, this.setRecognitions);
@@ -34,6 +31,8 @@ class _CameraFeedState extends State<CameraFeed> {
   CameraController controller;
   bool isDetecting = false;
   List<item> its;
+  int n = 0;
+  ScreenshotController screenshotController = ScreenshotController();
   @override
   void initState() {
     super.initState();
@@ -111,36 +110,18 @@ class _CameraFeedState extends State<CameraFeed> {
   Future hablar(String a) async {
     print("2");
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int n = 0;
     final time = DateTime.now()
         .toIso8601String()
         .replaceAll('.', '-')
         .replaceAll(':', '-');
-    final img = await controller.capture();
-    if (img == null) return;
-    await saveImage(img, a + time);    
-    String path = getPath(img, a + time);
-    its.add(item(a, time, path));
+    its.add(item(a, time, 'route'));
+    History(its[n]);
     setState(() {
-      prefs.setString(n, a);
+      prefs.setString(n.toString(), a);
       n = n + 1;
     });
+
     await widget.flutterTts.speak(a);
-  }
-
-  String getPath(Uint8List bytes, String nombre){
-    final directory = await getApplicationDocumentsDirectory();
-    final image = File('${directory.path}/${nombre}.png');
-    image.writeAsBytesSync(bytes);
-    return image.path;
-  }
-
-  Future<String> saveImage(Uint8List bytes, String nombre) async {
-    await [Permission.storage].request();
-    final name = nombre;
-    final result = await ImageGallerySaver.saveImage(bytes, name: name);
-
-    return result['filePath'];
   }
 
   bool validar(String a) {
