@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:object_detection/realtime/live_camera.dart';
 import 'package:object_detection/static%20image/static.dart';
 import 'package:object_detection/historial/historial.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:object_detection/historial/historial.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 List<CameraDescription> cameras;
 
@@ -10,6 +15,7 @@ Future<void> main() async {
   // initialize the cameras when the app starts
   WidgetsFlutterBinding.ensureInitialized();
   cameras = await availableCameras();
+
   // running the app
   runApp(MaterialApp(
     home: MyApp(),
@@ -20,10 +26,17 @@ Future<void> main() async {
 
 class MyApp extends StatefulWidget {
   @override
+  MyApp();
   _MyAppState createState() => _MyAppState();
 }
 
+class item {
+  String nombre, descripcion, photo;
+  item(this.nombre, this.descripcion, this.photo);
+}
+
 class _MyAppState extends State<MyApp> {
+  _MyAppState();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -125,6 +138,32 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    _cargarInit();
+    super.initState();
+  }
+
+  _cargarInit() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<item> its = [];
+    List<String> temp;
+    setState(() {
+      int sw = 0;
+      int i = 0;
+      while (sw == 0) {
+        if (prefs.getStringList(i.toString()) == null) {
+          sw = 1;
+        } else {
+          temp = prefs.getStringList(i.toString());
+          its[i] = item(temp[0], temp[1], temp[2]);
+          temp = [];
+        }
+        History(its[i]);
+      }
+    });
   }
 
   aboutDialog() {
