@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:object_detection/main.dart';
 import 'package:object_detection/realtime/camera.dart';
 
 void main() => runApp(HistoryApp());
@@ -9,7 +10,7 @@ class HistoryApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text('Historial de Escaneadas')),
-        body: History(),
+        body: History(item('', '', '')),
       ),
     );
   }
@@ -17,10 +18,14 @@ class HistoryApp extends StatelessWidget {
 
 class History extends StatefulWidget {
   @override
-  _HistoryState createState() => _HistoryState();
+  item i;
+  History(this.i);
+  _HistoryState createState() => _HistoryState(i);
 }
 
 class _HistoryState extends State<History> {
+  item i;
+  _HistoryState(this.i);
   @override
   void initState() {
     super.initState();
@@ -31,12 +36,12 @@ class _HistoryState extends State<History> {
     return ListView.builder(
       itemBuilder: (context, index) {
         return ListTile(
-          title: Text(),
-          subtitle: Text(CameraFeed.history[index].descripcion),
+          title: Text(i.nombre),
+          subtitle: Text(i.descripcion),
           leading: Icon(Icons.supervised_user_circle),
         );
       },
-      itemCount: history.length,
+      itemCount: 100,
     );
   }
 }
